@@ -4,7 +4,7 @@ const pg = require('pg')
 const test = require('tape')
 const triggers = require('../index.js')
 
-const DB = process.env.POSTGRES
+const DB = `postgres://postgres:postgres@localhost:5432/triggertest`;
 
 test('buildTriggers()', function (t) {
   t.plan(12)
@@ -43,7 +43,7 @@ test('buildQuery(triggers, opts) with channel', function (t) {
   t.ok(str.indexOf(`pg_notify('foo_chan',`) > -1, 'should have correct channel')
 })
 
-function create (client, cb) {
+function create(client, cb) {
   client.query(`
     CREATE TABLE IF NOT EXISTS triggers_test_table1 (id bigserial primary key, name varchar(20));
     CREATE TABLE IF NOT EXISTS triggers_test_table2 (id bigserial primary key, name varchar(20));
@@ -51,7 +51,7 @@ function create (client, cb) {
   `, cb)
 }
 
-function clean (client, cb) {
+function clean(client, cb) {
   client.query(`
     DROP TABLE IF EXISTS triggers_test_table1;
     DROP TABLE IF EXISTS triggers_test_table2;
@@ -88,7 +88,7 @@ test('test triggers', function (t) {
   t.plan(15)
   const opts = {
     db: DB, tables: [
-      'triggers_test_table1', 'triggers_test_table2:id', { name: 'triggers_test_table3', id: 'u_id'}
+      'triggers_test_table1', 'triggers_test_table2:id', { name: 'triggers_test_table3', id: 'u_id' }
     ]
   }
 
