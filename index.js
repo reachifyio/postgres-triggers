@@ -7,6 +7,7 @@ function buildQuery(triggers, opts = {}) {
   opts.channel = typeof opts.channel === 'string' ? opts.channel : 'table_update'
   assert.equal(typeof triggers, 'string')
 
+  // hstore change source https://stackoverflow.com/questions/30064725/how-to-process-postgresql-triggers-in-a-distributed-environment
   return `
     CREATE OR REPLACE FUNCTION table_update_notify() RETURNS trigger AS $$
     DECLARE
@@ -22,17 +23,17 @@ function buildQuery(triggers, opts = {}) {
       EXECUTE 'SELECT ($1).' || TG_ARGV[0] INTO id USING row;
 
       IF TG_OP = 'UPDATE' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP), 'row', hstore_to_json(hstore(NEW) - hstore(OLD)))::text);
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
         RETURN NEW;
       END IF;
 
       IF TG_OP = 'INSERT' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP), 'row', row_to_json(NEW))::text);
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
         RETURN NEW;
       END IF;
 
       IF TG_OP = 'DELETE' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP), 'row', row_to_json(OLD))::text);
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
         RETURN OLD;
       END IF;
 
