@@ -23,17 +23,17 @@ function buildQuery(triggers, opts = {}) {
       EXECUTE 'SELECT ($1).' || TG_ARGV[0] INTO id USING row;
 
       IF TG_OP = 'UPDATE' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP)));
         RETURN NEW;
       END IF;
 
       IF TG_OP = 'INSERT' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP)));
         RETURN NEW;
       END IF;
 
       IF TG_OP = 'DELETE' THEN
-        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP));
+        PERFORM pg_notify('${opts.channel}', json_build_object('table', TG_TABLE_NAME, 'id', id, 'type', lower(TG_OP)));
         RETURN OLD;
       END IF;
 
